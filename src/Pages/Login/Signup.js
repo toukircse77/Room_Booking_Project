@@ -7,7 +7,7 @@ import PrimaryButton from '../../Components/Button/PrimaryButton'
 import { AuthContext } from '../../contexts/AuthProvider'
 
 const Signup = () => {
-  const {createUser, updateUserProfile,verifyEmail,loading} = useContext(AuthContext);
+  const {createUser, updateUserProfile,verifyEmail,loading,signInWithGoogle} = useContext(AuthContext);
 
   const handleSubmit = event =>{
     event.preventDefault();
@@ -40,9 +40,17 @@ const Signup = () => {
 
     }).catch(err => console.error(err))
     }).catch(err => console.error(err))
-     
-
+  
   }
+
+  // Google sign in 
+  const handleGoogleSignin = () =>{
+    signInWithGoogle().then(result => {
+      const user = result.user;
+      console.log(user);
+    }).catch(err => console.error(err))
+  }
+
 
   return (
     <div className='flex justify-center items-center pt-8'>
@@ -134,7 +142,7 @@ const Signup = () => {
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
         <div className='flex justify-center space-x-4'>
-          <button aria-label='Log in with Google' className='p-3 rounded-sm'>
+          <button onClick={ handleGoogleSignin} aria-label='Log in with Google' className='p-3 rounded-sm'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 32 32'

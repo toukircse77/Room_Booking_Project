@@ -1,8 +1,28 @@
-import React from 'react'
+import { Result } from 'postcss'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import PrimaryButton from '../../Components/Button/PrimaryButton'
+import { AuthContext } from '../../contexts/AuthProvider'
 
 const Login = () => {
+  const {signin,signInWithGoogle} = useContext(AuthContext);
+
+  const handleLogin = event =>{
+        event.preventDefault();
+        const email = event.target.email.value;
+        const password= event.target.password.value;
+        signin(email,password).then(Result =>{
+          const user = Result.user;
+        }).catch(err => console.error(err))
+  }
+
+// Google sign in 
+const handleGoogleSignin = () =>{
+  signInWithGoogle().then(result => {
+    const user = result.user;
+    console.log(user);
+  }).catch(err => console.error(err))
+}
   return (
     <div className='flex justify-center items-center pt-8'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
@@ -13,6 +33,7 @@ const Login = () => {
           </p>
         </div>
         <form
+          onSubmit={handleLogin}
           noValidate=''
           action=''
           className='space-y-6 ng-untouched ng-pristine ng-valid'
@@ -71,7 +92,7 @@ const Login = () => {
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
         <div className='flex justify-center space-x-4'>
-          <button aria-label='Log in with Google' className='p-3 rounded-sm'>
+          <button onClick={handleGoogleSignin} aria-label='Log in with Google' className='p-3 rounded-sm'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 32 32'
