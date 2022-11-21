@@ -1,9 +1,49 @@
-import React from 'react'
+import { Result } from 'postcss'
+import React, { useContext } from 'react'
+import toast from 'react-hot-toast'
 
 import { Link } from 'react-router-dom'
 import PrimaryButton from '../../Components/Button/PrimaryButton'
+import { AuthContext } from '../../contexts/AuthProvider'
 
 const Signup = () => {
+  const {createUser, updateUserProfile,verifyEmail,loading} = useContext(AuthContext);
+
+  const handleSubmit = event =>{
+    event.preventDefault();
+    const form = event.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const image = form.image.files[0]
+    console.log(name,email,password,image)
+    const formData = new FormData()
+    formData.append('image', image)
+    const url = "https://api.imgbb.com/1/upload?key=6e8f1f07305e423d9325ae69ba2035e4"
+    fetch(url,{
+      method:"POST",
+      body:formData,
+    }).then(res => res.json())
+    .then(data => {
+
+      // create user
+      createUser(email,password)
+    .then(result => {
+      updateUserProfile(name,data.data.display_url).then(
+        verifyEmail().then(()=>{
+          toast.success('please check your email for verification')
+        })
+        .catch(err => console.error(err))
+
+      ).catch(err => console.error(err))
+      .catch(err => console.error(err))
+
+    }).catch(err => console.error(err))
+    }).catch(err => console.error(err))
+     
+
+  }
+
   return (
     <div className='flex justify-center items-center pt-8'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
@@ -12,6 +52,7 @@ const Signup = () => {
           <p className='text-sm text-gray-400'>Create a new account</p>
         </div>
         <form
+        onSubmit={handleSubmit}
           noValidate=''
           action=''
           className='space-y-12 ng-untouched ng-pristine ng-valid'
@@ -41,6 +82,7 @@ const Signup = () => {
                 name='image'
                 accept='image/*'
                 required
+                
               />
             </div>
             <div>

@@ -12,15 +12,18 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth'
-import app from '../firebase/firebase.config'
+import app from '../firebase/firebase.config';
+
+
 
 export const AuthContext = createContext()
-const auth = getAuth(app)
+const auth = getAuth(app);
 
 const googleProvider = new GoogleAuthProvider()
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  console.log(user)
   const [loading, setLoading] = useState(true)
 
   //1. Create User
