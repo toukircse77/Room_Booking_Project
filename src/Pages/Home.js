@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 import ExpCard from '../Components/Card/ExpCard';
 import HomeCard from '../Components/Card/HomeCard';
 import SearchForm from '../Components/Form/SearchForm';
@@ -18,7 +19,22 @@ const Home = () => {
       </div>
       <div className='flex-1'>
         <div> <HomeCard></HomeCard> </div>
-        <div> <ExpCard></ExpCard> </div>
+        <div> 
+        <div className="flex justify-between px-4">
+          <p className='text-xl font-bold'>Experience</p>
+          <Link to='/coming-soon'><p>See All</p></Link>
+        </div>
+          <div className="container pb-8 pt-2 mx-auto">
+            <div className="flex flex-wrap">
+            {
+            allExperience.slice(0,4).map((exp, i) => <ExpCard
+            key={i}
+            exp={exp}
+            ></ExpCard> )
+          }
+            </div>
+          </div>
+           </div>
       </div>
 
     </div>
