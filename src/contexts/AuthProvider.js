@@ -96,6 +96,7 @@ const AuthProvider = ({ children }) => {
     resetPassword,
     loading,
     setLoading,
+    setLoading,
   }
 
   return (

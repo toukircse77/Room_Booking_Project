@@ -1,11 +1,18 @@
 import { Result } from 'postcss'
-import React, { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { setAuthToken } from '../../API/auth'
 import PrimaryButton from '../../Components/Button/PrimaryButton'
+import SmallSpinner from '../../Components/Spinner/SmallSpinner'
 import { AuthContext } from '../../contexts/AuthProvider'
 
 const Login = () => {
-  const {signin,signInWithGoogle} = useContext(AuthContext);
+  const {signin,signInWithGoogle,loading,setLoading,resetPassword} = useContext(AuthContext);
+  const [ userEmail, setUserEmail] = useState('');
+  const navigate = useNavigate();
+    const location = useLocation();
+    const from= location?.state?.from?.pathname || '/';
 
   const handleLogin = event =>{
         event.preventDefault();
@@ -13,21 +20,42 @@ const Login = () => {
         const password= event.target.password.value;
         signin(email,password).then(Result =>{
           const user = Result.user;
-        }).catch(err => console.error(err))
+          toast.success('login successfull....')
+          setAuthToken(user)
+          navigate(from, {replace: true})
+          
+        }).catch(err => {
+          toast.error(err.message)
+          setLoading(false)
+        })
   }
 
 // Google sign in 
 const handleGoogleSignin = () =>{
   signInWithGoogle().then(result => {
     const user = result.user;
-    console.log(user);
-  }).catch(err => console.error(err))
+    navigate(from, {replace: true})
+    setAuthToken(user);
+  }).catch(err => {
+    console.error(err)
+    setLoading(false)
+  })
 }
+ // Reset Password
+ const handleForgetPassword = () =>{
+  resetPassword(userEmail).then(()=>{
+    toast.success('please check your email')
+  }).catch(err => {
+    setLoading(false)
+    console.error(err)})
+ }
+
+
   return (
     <div className='flex justify-center items-center pt-8'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
         <div className='mb-8 text-center'>
-          <h1 className='my-3 text-4xl font-bold'>Sign in</h1>
+          <h1 className='my-3 text-4xl font-bold'><span className='text-orange-600'>Log</span>in</h1>
           <p className='text-sm text-gray-400'>
             Sign in to access your account
           </p>
@@ -44,6 +72,7 @@ const handleGoogleSignin = () =>{
                 Email address
               </label>
               <input
+              onBlur={(e)=>setUserEmail(e.target.value)}
                 type='email'
                 name='email'
                 id='email'
@@ -75,12 +104,12 @@ const handleGoogleSignin = () =>{
               type='submit'
               classes='w-full px-8 py-3 font-semibold rounded-md bg-gray-900 hover:bg-gray-700 hover:text-white text-gray-100'
             >
-              Sign in
+             {loading ? <SmallSpinner></SmallSpinner> : 'Signin'}
             </PrimaryButton>
           </div>
         </form>
         <div className='space-y-1'>
-          <button className='text-xs hover:underline text-gray-400'>
+          <button onClick={handleForgetPassword} className='text-xs hover:underline text-gray-400'>
             Forgot password?
           </button>
         </div>
@@ -123,7 +152,7 @@ const handleGoogleSignin = () =>{
         <p className='px-6 text-sm text-center text-gray-400'>
           Don't have an account yet?{' '}
           <Link to='/signup' className='hover:underline text-gray-600'>
-            Sign up
+            Register
           </Link>
           .
         </p>

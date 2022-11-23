@@ -2,13 +2,19 @@ import { Result } from 'postcss'
 import React, { useContext } from 'react'
 import toast from 'react-hot-toast'
 
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { setAuthToken } from '../../API/auth'
 import PrimaryButton from '../../Components/Button/PrimaryButton'
+import SmallSpinner from '../../Components/Spinner/SmallSpinner'
 import { AuthContext } from '../../contexts/AuthProvider'
 
 const Signup = () => {
-  const {createUser, updateUserProfile,verifyEmail,loading,signInWithGoogle} = useContext(AuthContext);
+  const {createUser, updateUserProfile,verifyEmail,loading,signInWithGoogle,setLoading} = useContext(AuthContext);
 
+
+const navigate = useNavigate();
+const location = useLocation();
+const from= location?.state?.from?.pathname || '/';
   const handleSubmit = event =>{
     event.preventDefault();
     const form = event.target;
@@ -29,16 +35,21 @@ const Signup = () => {
       // create user
       createUser(email,password)
     .then(result => {
+      const user = result.user;
+      setAuthToken(user)
       updateUserProfile(name,data.data.display_url).then(
         verifyEmail().then(()=>{
           toast.success('please check your email for verification')
+          navigate(from, {replace: true})
         })
         .catch(err => console.error(err))
 
       ).catch(err => console.error(err))
       .catch(err => console.error(err))
 
-    }).catch(err => console.error(err))
+    }).catch(err => {
+      console.error(err)
+    setLoading(false)})
     }).catch(err => console.error(err))
   
   }
@@ -47,7 +58,8 @@ const Signup = () => {
   const handleGoogleSignin = () =>{
     signInWithGoogle().then(result => {
       const user = result.user;
-      console.log(user);
+      setAuthToken(user)
+      navigate(from, {replace: true})
     }).catch(err => console.error(err))
   }
 
@@ -56,7 +68,7 @@ const Signup = () => {
     <div className='flex justify-center items-center pt-8'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
         <div className='mb-8 text-center'>
-          <h1 className='my-3 text-4xl font-bold'>Signup</h1>
+          <h1 className='my-3 text-4xl font-bold'> <span className='text-orange-600'>Reg</span>ister</h1>
           <p className='text-sm text-gray-400'>Create a new account</p>
         </div>
         <form
@@ -129,7 +141,7 @@ const Signup = () => {
                 type='submit'
                 classes='w-full px-8 py-3 font-semibold rounded-md bg-gray-900 hover:bg-gray-700 hover:text-white text-gray-100'
               >
-                Sign up
+               { loading ? <SmallSpinner></SmallSpinner> : " Sign up"}
               </PrimaryButton>
             </div>
           </div>
