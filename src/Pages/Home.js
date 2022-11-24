@@ -18,23 +18,38 @@ const Home = () => {
         <SearchForm></SearchForm>
       </div>
       <div className='flex-1'>
-        <div> <HomeCard></HomeCard> </div>
-        <div> 
-        <div className="flex justify-between px-4">
-          <p className='text-xl font-bold'>Experience</p>
-          <Link to='/coming-soon'><p>See All</p></Link>
-        </div>
+        <div>
+          <div className="flex justify-between px-4 mt-10">
+            <p className='text-xl font-bold'>Home</p>
+            <Link to='/coming-soon'><p>See All</p></Link>
+          </div>
           <div className="container pb-8 pt-2 mx-auto">
             <div className="flex flex-wrap">
-            {
-            allExperience.slice(0,4).map((exp, i) => <ExpCard
-            key={i}
-            exp={exp}
-            ></ExpCard> )
-          }
+              {
+                [...Array(3)].map((_, i) => <HomeCard
+                  key={i}
+                  
+                ></HomeCard>)
+              }
             </div>
           </div>
-           </div>
+        </div>
+        <div>
+          <div className="flex justify-between px-4">
+            <p className='text-xl font-bold'>Experience</p>
+            <Link to='/coming-soon'><p>See All</p></Link>
+          </div>
+          <div className="container pb-8 pt-2 mx-auto">
+            <div className="flex flex-wrap">
+              {
+                allExperience.slice(0, 4).map((exp, i) => <ExpCard
+                  key={i}
+                  exp={exp}
+                ></ExpCard>)
+              }
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
